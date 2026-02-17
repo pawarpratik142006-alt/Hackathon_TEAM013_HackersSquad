@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <title>E-Voting System</title>
-
 <style>
 body{
   margin:0;
@@ -12,7 +11,6 @@ body{
   color:white;
 }
 
-/* Logo */
 .logo{
   position:absolute;
   top:15px;
@@ -21,7 +19,6 @@ body{
   font-weight:bold;
 }
 
-/* Card */
 .card{
   width:380px;
   margin:80px auto;
@@ -66,11 +63,6 @@ button{
   margin:10px 0;
   border-radius:8px;
   cursor:pointer;
-  transition:.3s;
-}
-
-.party:hover{
-  background:rgba(0,198,255,0.3);
 }
 
 .resultBox{
@@ -89,13 +81,18 @@ button{
 
 <!-- LOGIN -->
 <div class="card" id="loginPage">
-<h2>Voter Login</h2>
+<h2>Voter Login + OTP</h2>
 
 <input type="text" id="name" placeholder="Full Name">
 <input type="number" id="age" placeholder="Age">
 <input type="text" id="aadhar" placeholder="Aadhaar Number" maxlength="12">
 
-<button onclick="verify()">Verify & Login</button>
+<button onclick="sendOTP()">Send OTP</button>
+
+<input type="text" id="otpInput" placeholder="Enter OTP">
+
+<button onclick="verifyOTP()">Verify & Login</button>
+
 <div id="msg"></div>
 </div>
 
@@ -117,17 +114,18 @@ button{
 
 <script>
 let voted=false;
+let generatedOTP="";
 
 let countA=0;
 let countB=0;
 let countC=0;
 
-function verify(){
+function sendOTP(){
   let age=document.getElementById("age").value;
   let aadhar=document.getElementById("aadhar").value;
 
   if(age<18){
-    msg.innerHTML="❌ You must be 18+";
+    msg.innerHTML="❌ Must be 18+";
     return;
   }
 
@@ -136,12 +134,24 @@ function verify(){
     return;
   }
 
-  msg.innerHTML="✅ Login Success";
+  generatedOTP=Math.floor(1000+Math.random()*9000);
+  msg.innerHTML="📲 OTP Sent: <b>"+generatedOTP+"</b> (Demo)";
+}
 
-  setTimeout(()=>{
-    loginPage.style.display="none";
-    votingPage.style.display="block";
-  },1000);
+function verifyOTP(){
+  let entered=document.getElementById("otpInput").value;
+
+  if(entered==generatedOTP){
+    msg.innerHTML="✅ OTP Verified";
+
+    setTimeout(()=>{
+      loginPage.style.display="none";
+      votingPage.style.display="block";
+    },1000);
+  }
+  else{
+    msg.innerHTML="❌ Wrong OTP";
+  }
 }
 
 function vote(party){
@@ -152,13 +162,13 @@ function vote(party){
 
   voted=true;
 
-  if(party=="A"){ countA++; }
-  if(party=="B"){ countB++; }
-  if(party=="C"){ countC++; }
+  if(party=="A"){countA++;}
+  if(party=="B"){countB++;}
+  if(party=="C"){countC++;}
 
-  document.getElementById("countA").innerText=countA;
-  document.getElementById("countB").innerText=countB;
-  document.getElementById("countC").innerText=countC;
+  countAEl.innerText=countA;
+  countBEl.innerText=countB;
+  countCEl.innerText=countC;
 
   voteMsg.innerHTML="🎉 Vote submitted successfully!";
 }
