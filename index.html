@@ -145,14 +145,23 @@ function showPage(page){
       let html='<h2>Live Vote Results</h2>';
       let total=0;
       for(let p in votes){total+=votes[p];}
-      for(let p in votes){
-        let percent=total>0?Math.round((votes[p]/total)*100):0;
-        html+=`<p>${p}: ${votes[p]} votes</p>
-               <div class="bar-container"><div class="bar" style="width:0" data-percent="${percent}">${percent}%</div></div>`;
+
+      if(isAdmin){
+        // Admin sees full results
+        for(let p in votes){
+          let percent=total>0?Math.round((votes[p]/total)*100):0;
+          html+=`<p>${p}: ${votes[p]} votes</p>
+                 <div class="bar-container"><div class="bar" style="width:0" data-percent="${percent}">${percent}%</div></div>`;
+        }
+      } else {
+        // Normal user sees only limited info
+        html+='<p style="font-size:14px;color:red;">Full results are visible only to admin</p>';
+        for(let p in votes){
+          html+=`<p>${p}: 🔒 Hidden</p>
+                 <div class="bar-container"><div class="bar" style="width:0" data-percent="0">0%</div></div>`;
+        }
       }
-      if(!isAdmin){
-        html+='<p style="font-size:12px;color:red;">Admin login required for full details</p>';
-      }
+
       html+='<button onclick="showPage(\'login\')">Back to Home</button>';
       app.innerHTML=html;
       animateBars();
@@ -187,12 +196,16 @@ function animateBars(){
 
 // ===== Verify Login =====
 function verifyLogin(){
+  const name=document.getElementById("name").value.trim();
   const age=document.getElementById("age").value;
-  const aadhaar=document.getElementById("aadhaar").value;
+  const aadhaar=document.getElementById("aadhaar").value.trim();
   const msg=document.getElementById("msg");
-  if(age<18){msg.innerHTML="❌ You must be 18+ to vote";msg.style.color="red";return;}
-  if(aadhaar.length!=12 || isNaN(aadhaar)){msg.innerHTML="❌ Invalid Aadhaar Number";msg.style.color="red";return;}
-  msg.innerHTML="✅ Verification Successful";msg.style.color="green";
+
+  if(name===""){msg.innerHTML="❌ Please enter your name"; msg.style.color="red"; return;}
+  if(age<18){msg.innerHTML="❌ You must be 18+ to vote"; msg.style.color="red"; return;}
+  if(!/^\d{12}$/.test(aadhaar)){msg.innerHTML="❌ Invalid Aadhaar Number"; msg.style.color="red"; return;}
+
+  msg.innerHTML="✅ Verification Successful"; msg.style.color="green";
   setTimeout(()=> showPage('instructions'),1000);
 }
 
@@ -210,8 +223,11 @@ function confirmVote(party){
 function showAdminLogin(){showPage('admin');}
 function adminLogin(){
   const pass=document.getElementById('adminPass').value;
-  if(pass==='admin123'){isAdmin=true; alert('Admin Login Successful'); showPage('results');}
-  else alert('Incorrect Password');
+  if(pass==='admin123'){
+    isAdmin=true; 
+    alert('Admin Login Successful'); 
+    showPage('results');
+  } else alert('Incorrect Password');
 }
 
 // ===== Start App =====
