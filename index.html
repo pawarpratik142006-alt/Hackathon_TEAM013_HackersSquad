@@ -2,86 +2,111 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>E-Voting System</title>
+<title>National E-Voting Portal</title>
 <style>
 body{
   margin:0;
-  font-family:Segoe UI, sans-serif;
-  background:linear-gradient(120deg,#0a1931,#1f4068,#16213e);
-  color:white;
+  font-family:'Segoe UI', Arial;
+  background:#f4f7fb;
 }
 
-.logo{
-  position:absolute;
-  top:15px;
-  left:20px;
+/* Header */
+.header{
+  background:#0b3d91;
+  color:white;
+  padding:15px 25px;
   font-size:22px;
   font-weight:bold;
 }
 
+/* Card */
 .card{
-  width:380px;
-  margin:80px auto;
+  width:450px;
+  margin:60px auto;
   padding:30px;
-  background:rgba(255,255,255,0.08);
-  backdrop-filter:blur(12px);
-  border-radius:15px;
-  box-shadow:0 0 20px rgba(0,0,0,0.4);
-  animation:fadeIn 1s ease;
+  background:white;
+  border-radius:12px;
+  box-shadow:0 8px 25px rgba(0,0,0,0.1);
+  animation:fadeIn .6s ease;
 }
 
 @keyframes fadeIn{
-  from{opacity:0; transform:translateY(40px);}
+  from{opacity:0; transform:translateY(30px);}
   to{opacity:1; transform:translateY(0);}
 }
 
-h2{text-align:center;}
+h2{
+  text-align:center;
+  color:#0b3d91;
+}
 
 input{
   width:100%;
   padding:12px;
   margin:8px 0;
-  border:none;
-  border-radius:8px;
+  border-radius:6px;
+  border:1px solid #ccc;
 }
 
 button{
   width:100%;
   padding:12px;
   margin-top:10px;
-  background:linear-gradient(45deg,#00c6ff,#0072ff);
-  border:none;
-  border-radius:8px;
+  background:#0b3d91;
   color:white;
-  font-size:15px;
+  border:none;
+  border-radius:6px;
   cursor:pointer;
+  transition:.3s;
 }
 
+button:hover{
+  background:#092c6a;
+}
+
+/* Party box */
 .party{
-  background:rgba(255,255,255,0.1);
-  padding:12px;
+  display:flex;
+  align-items:center;
+  border:1px solid #ddd;
+  padding:10px;
   margin:10px 0;
   border-radius:8px;
   cursor:pointer;
+  transition:.2s;
 }
 
-.resultBox{
-  background:rgba(0,0,0,0.3);
-  padding:10px;
-  border-radius:8px;
+.party:hover{
+  background:#eef3ff;
+}
+
+.party img{
+  width:40px;
+  height:40px;
+  margin-right:15px;
+}
+
+.result{
   margin-top:10px;
+  padding:10px;
+  background:#f0f4ff;
+  border-radius:8px;
 }
 
-#msg,#voteMsg{text-align:center;margin-top:10px;}
+#msg,#voteMsg{
+  text-align:center;
+  margin-top:10px;
+  font-weight:500;
+}
 </style>
 </head>
 <body>
 
-<div class="logo">🇮🇳 E-Voting System</div>
+<div class="header">🇮🇳 National E-Voting Portal</div>
 
 <!-- LOGIN -->
 <div class="card" id="loginPage">
-<h2>Voter Login + OTP</h2>
+<h2>Voter Authentication</h2>
 
 <input type="text" id="name" placeholder="Full Name">
 <input type="number" id="age" placeholder="Age">
@@ -90,81 +115,81 @@ button{
 <button onclick="sendOTP()">Send OTP</button>
 
 <input type="text" id="otpInput" placeholder="Enter OTP">
-
-<button onclick="verifyOTP()">Verify & Login</button>
+<button onclick="verifyOTP()">Verify & Continue</button>
 
 <div id="msg"></div>
 </div>
 
 <!-- VOTING -->
 <div class="card" id="votingPage" style="display:none;">
-<h2>Select Your Party</h2>
+<h2>Cast Your Vote</h2>
 
-<div class="party" onclick="vote('A')">🟠 Party A</div>
-<div class="party" onclick="vote('B')">🔵 Party B</div>
-<div class="party" onclick="vote('C')">🟢 Party C</div>
+<div class="party" onclick="vote('A')">
+  <img src="https://cdn-icons-png.flaticon.com/512/197/197419.png">
+  Party A
+</div>
+
+<div class="party" onclick="vote('B')">
+  <img src="https://cdn-icons-png.flaticon.com/512/197/197408.png">
+  Party B
+</div>
+
+<div class="party" onclick="vote('C')">
+  <img src="https://cdn-icons-png.flaticon.com/512/197/197484.png">
+  Party C
+</div>
 
 <div id="voteMsg"></div>
 
-<h2>Live Vote Counting</h2>
-<div class="resultBox">🟠 Party A Votes: <span id="countA">0</span></div>
-<div class="resultBox">🔵 Party B Votes: <span id="countB">0</span></div>
-<div class="resultBox">🟢 Party C Votes: <span id="countC">0</span></div>
+<h2>Live Results</h2>
+<div class="result">Party A Votes: <span id="countA">0</span></div>
+<div class="result">Party B Votes: <span id="countB">0</span></div>
+<div class="result">Party C Votes: <span id="countC">0</span></div>
 </div>
 
 <script>
+let otp="";
 let voted=false;
-let generatedOTP="";
-
-let countA=0;
-let countB=0;
-let countC=0;
+let countA=0,countB=0,countC=0;
 
 function sendOTP(){
-  let age=document.getElementById("age").value;
-  let aadhar=document.getElementById("aadhar").value;
-
-  if(age<18){
-    msg.innerHTML="❌ Must be 18+";
+  if(age.value<18){
+    msg.innerHTML="❌ Must be 18+ to vote";
     return;
   }
 
-  if(aadhar.length!=12){
-    msg.innerHTML="❌ Invalid Aadhaar";
+  if(aadhar.value.length!=12){
+    msg.innerHTML="❌ Invalid Aadhaar Number";
     return;
   }
 
-  generatedOTP=Math.floor(1000+Math.random()*9000);
-  msg.innerHTML="📲 OTP Sent: <b>"+generatedOTP+"</b> (Demo)";
+  otp=Math.floor(1000+Math.random()*9000);
+  msg.innerHTML="OTP Sent (Demo): "+otp;
 }
 
 function verifyOTP(){
-  let entered=document.getElementById("otpInput").value;
-
-  if(entered==generatedOTP){
-    msg.innerHTML="✅ OTP Verified";
-
+  if(otpInput.value==otp){
+    msg.innerHTML="✅ Verified Successfully";
     setTimeout(()=>{
       loginPage.style.display="none";
       votingPage.style.display="block";
-    },1000);
-  }
-  else{
-    msg.innerHTML="❌ Wrong OTP";
+    },800);
+  }else{
+    msg.innerHTML="❌ Incorrect OTP";
   }
 }
 
 function vote(party){
   if(voted){
-    voteMsg.innerHTML="⚠️ You already voted!";
+    voteMsg.innerHTML="⚠️ You already voted";
     return;
   }
 
   voted=true;
 
-  if(party=="A"){countA++;}
-  if(party=="B"){countB++;}
-  if(party=="C"){countC++;}
+  if(party=="A") countA++;
+  if(party=="B") countB++;
+  if(party=="C") countC++;
 
   countAEl.innerText=countA;
   countBEl.innerText=countB;
