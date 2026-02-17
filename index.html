@@ -1,430 +1,257 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Election Commission E-Voting Portal</title>
-    <style>
-        /* --- GOV THEME VARIABLES --- */
-        :root {
-            --gov-blue: #003366; /* Deep official blue */
-            --gov-accent-blue: #005b9f;
-            --saffron: #FF9933;
-            --green: #138808;
-            --bg-light: #f2f5f7;
-            --text-dark: #222;
-            --card-shadow: 0 6px 12px rgba(0,40,100,0.15);
-        }
-
-        /* --- BASE STYLES & ANIMATIONS --- */
-        body {
-            font-family: 'Arial', 'Helvetica', sans-serif;
-            background-color: var(--bg-light);
-            color: var(--text-dark);
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        /* Keyframes for smooth section entry */
-        @keyframes slideUpFade {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .animate-entry {
-            animation: slideUpFade 0.6s ease-out forwards;
-        }
-
-        /* --- HEADER STYLES --- */
-        header {
-            background-color: white;
-            border-bottom: 4px solid var(--saffron);
-            padding: 15px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-
-        .header-content {
-            display: flex;
-            align-items: center;
-            max-width: 1000px;
-            width: 100%;
-        }
-
-        /* Inline SVG for Emblem placeholder to keep single file */
-        .emblem-svg {
-            height: 60px;
-            width: auto;
-            margin-right: 20px;
-            fill: var(--gov-blue);
-        }
-
-        .header-titles h1 {
-            margin: 0;
-            font-size: 1.5rem;
-            color: var(--gov-blue);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .header-titles p {
-            margin: 5px 0 0 0;
-            font-size: 0.9rem;
-            color: #555;
-        }
-        .hindi-text { font-weight: bold; color: var(--gov-blue); }
-
-        /* Faux Navigation Bar */
-        .topnav {
-            background-color: var(--gov-blue);
-            overflow: hidden;
-            text-align: center;
-        }
-        .topnav a {
-            display: inline-block;
-            color: #f2f2f2;
-            text-align: center;
-            padding: 10px 16px;
-            text-decoration: none;
-            font-size: 14px;
-        }
-        .topnav a.active { background-color: var(--saffron); color: white; }
-
-
-        /* --- MAIN CONTENT AREA --- */
-        main {
-            flex: 1; /* Fills available space */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 30px;
-        }
-
-        .card {
-            background: white;
-            border-top: 4px solid var(--gov-blue);
-            border-radius: 4px;
-            box-shadow: var(--card-shadow);
-            width: 100%;
-            max-width: 450px;
-            overflow: hidden;
-        }
-
-        .card-header {
-            background-color: #e9eff5;
-            padding: 15px 25px;
-            border-bottom: 1px solid #dce4ec;
-        }
-        .card-header h2 {
-            margin: 0;
-            color: var(--gov-blue);
-            font-size: 1.3rem;
-        }
-
-        .card-body {
-            padding: 25px;
-        }
-
-        /* --- FORM ELEMENTS --- */
-        input[type="text"] {
-            width: 100%;
-            padding: 12px;
-            margin: 15px 0;
-            border: 2px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-            transition: border-color 0.3s;
-        }
-        input[type="text"]:focus { border-color: var(--gov-blue); outline: none; }
-
-        .btn-gov {
-            background-color: var(--gov-blue);
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            width: 100%;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-        }
-        .btn-gov:hover { background-color: var(--gov-accent-blue); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
-
-        /* --- VOTING & RESULTS STYLES --- */
-        .candidate-card {
-            border: 1px solid #eee;
-            background: #fdfdfd;
-            padding: 15px;
-            margin: 15px 0;
-            border-radius: 4px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: transform 0.2s;
-        }
-        .candidate-card:hover { transform: translateX(5px); border-color: var(--gov-accent-blue); }
-        .candidate-card button { width: auto; margin: 0; font-size: 14px; padding: 8px 16px; }
-
-        .result-bar-container {
-            background-color: #e0e0e0;
-            border-radius: 20px;
-            margin-top: 8px;
-            height: 22px;
-            width: 100%;
-            overflow: hidden;
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
-        }
-        .result-fill {
-            height: 100%;
-            width: 0%;
-            /* Smooth transition for result updates */
-            transition: width 1s cubic-bezier(0.4, 0.0, 0.2, 1);
-            /* Subtle striped animation */
-            background-image: linear-gradient(45deg, rgba(255,255,255,.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,.15) 50%, rgba(255,255,255,.15) 75%, transparent 75%, transparent);
-            background-size: 20px 20px;
-            animation: progress-stripes 2s linear infinite;
-        }
-        @keyframes progress-stripes { from { background-position: 20px 0; } to { background-position: 0 0; } }
-
-        .fill-saffron { background-color: var(--saffron); }
-        .fill-green { background-color: var(--green); }
-
-        /* --- FOOTER --- */
-        footer {
-            background-color: #333;
-            color: #bbb;
-            text-align: center;
-            padding: 15px;
-            font-size: 0.8rem;
-            border-top: 4px solid var(--green);
-        }
-
-        /* --- UTILITIES --- */
-        .hidden { display: none; }
-        #error-msg { color: #d32f2f; margin-top: 10px; font-size: 14px; font-weight: bold; }
-        .voter-info-tag { background: #eef2f5; padding: 5px 10px; border-radius: 20px; color: var(--gov-blue); font-weight: bold;}
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Election Commission E-Voting Portal</title>
+<style>
+:root {
+    --gov-blue: #003366;
+    --gov-accent-blue: #005b9f;
+    --saffron: #FF9933;
+    --green: #138808;
+    --purple: #6A1B9A;
+    --orange: #FF5722;
+    --bg-light: #f2f5f7;
+    --text-dark: #222;
+    --card-shadow: 0 6px 12px rgba(0,40,100,0.15);
+}
+body { font-family:'Arial','Helvetica',sans-serif; background-color:var(--bg-light); color:var(--text-dark); margin:0; display:flex; flex-direction:column; min-height:100vh;}
+@keyframes slideUpFade {from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+.animate-entry {animation: slideUpFade 0.6s ease-out forwards;}
+header {background:white; border-bottom:4px solid var(--saffron); padding:15px 20px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 5px rgba(0,0,0,0.1);}
+.header-content{display:flex; align-items:center; max-width:1000px; width:100%;}
+.emblem-svg{height:60px;width:auto;margin-right:20px;fill:var(--gov-blue);}
+.header-titles h1{margin:0;font-size:1.5rem;color:var(--gov-blue); text-transform:uppercase;letter-spacing:1px;}
+.header-titles p{margin:5px 0 0 0;font-size:0.9rem;color:#555;}
+.topnav{background-color:var(--gov-blue);overflow:hidden;text-align:center;}
+.topnav a{display:inline-block;color:#f2f2f2;text-align:center;padding:10px 16px;text-decoration:none;font-size:14px;}
+.topnav a.active{background-color:var(--saffron); color:white;}
+main{flex:1; display:flex; justify-content:center; align-items:center; padding:30px;}
+.card{background:white;border-top:4px solid var(--gov-blue);border-radius:4px;box-shadow:var(--card-shadow); width:100%; max-width:500px; overflow:hidden;}
+.card-header{background-color:#e9eff5; padding:15px 25px; border-bottom:1px solid #dce4ec;}
+.card-header h2{margin:0;color:var(--gov-blue); font-size:1.3rem;}
+.card-body{padding:25px;}
+input[type="text"], input[type="number"]{width:100%; padding:12px; margin:15px 0; border:2px solid #ccc; border-radius:4px; box-sizing:border-box; transition:border-color 0.3s;}
+input:focus{border-color:var(--gov-blue); outline:none;}
+.btn-gov{background-color:var(--gov-blue); color:white; border:none; padding:12px 25px; border-radius:4px; cursor:pointer; font-size:16px; font-weight:bold; width:100%; transition:all 0.3s ease; text-transform:uppercase;}
+.btn-gov:hover{background-color:var(--gov-accent-blue); box-shadow:0 4px 8px rgba(0,0,0,0.2);}
+.candidate-card{border:1px solid #eee; background:#fdfdfd; padding:15px; margin:15px 0; border-radius:4px; display:flex; justify-content:space-between; align-items:center; transition:transform 0.2s;}
+.candidate-card:hover{transform:translateX(5px); border-color:var(--gov-accent-blue);}
+.candidate-card button{width:auto; margin:0; font-size:14px; padding:8px 16px;}
+.result-bar-container{background-color:#e0e0e0; border-radius:20px; margin-top:8px; height:22px; width:100%; overflow:hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);}
+.result-fill{height:100%; width:0%; transition:width 1s cubic-bezier(0.4,0.0,0.2,1); background-image: linear-gradient(45deg, rgba(255,255,255,.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,.15) 50%, rgba(255,255,255,.15) 75%, transparent 75%, transparent); background-size:20px 20px; animation:progress-stripes 2s linear infinite;}
+@keyframes progress-stripes{from{background-position:20px 0;} to{background-position:0 0;}}
+.fill-saffron{background-color:var(--saffron);}
+.fill-green{background-color:var(--green);}
+.fill-purple{background-color:var(--purple);}
+.fill-orange{background-color:var(--orange);}
+footer{background-color:#333; color:#bbb; text-align:center; padding:15px; font-size:0.8rem; border-top:4px solid var(--green);}
+.hidden{display:none;}
+#error-msg,#otp-error-msg{color:#d32f2f; margin-top:10px; font-size:14px; font-weight:bold;}
+.voter-info-tag{background:#eef2f5; padding:5px 10px; border-radius:20px; color:var(--gov-blue); font-weight:bold;}
+</style>
 </head>
 <body>
 
 <header>
-    <div class="header-content">
-        <svg class="emblem-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
-        </svg>
-        <div class="header-titles">
-            <h1>भारत निर्वाचन आयोग <br><span style="font-size: 1.1rem;">Election Commission of India</span></h1>
-            <p>Secure National E-Voting Portal</p>
-        </div>
-    </div>
+<div class="header-content">
+<svg class="emblem-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg>
+<div class="header-titles">
+<h1>भारत निर्वाचन आयोग <br><span style="font-size:1.1rem;">Election Commission of India</span></h1>
+<p>Secure National E-Voting Portal</p>
+</div>
+</div>
 </header>
 
 <div class="topnav">
-    <a href="#" class="active">Home</a>
-    <a href="#">Voter Instructions</a>
-    <a href="#">Contact Us</a>
+<a href="#" class="active">Home</a>
+<a href="#">Voter Instructions</a>
+<a href="#">Contact Us</a>
 </div>
 
 <main>
-    <div class="card animate-entry" id="login-section">
-        <div class="card-header">
-            <h2>Voter Authentication / मतदाता प्रमाणीकरण</h2>
-        </div>
-        <div class="card-body">
-            <p style="margin-bottom: 20px;">Please enter your officially issued EPIC/Voter ID number to proceed secure login.</p>
-            <label for="voter-id" style="font-weight: bold; color: #555;">Voter ID Number:</label>
-            <input type="text" id="voter-id" placeholder="e.g., VOTE123">
-            <button class="btn-gov" onclick="authenticateVoter()">Verify & Proceed ▶</button>
-            <div id="error-msg"></div>
-        </div>
-    </div>
+<div class="card animate-entry" id="login-section">
+<div class="card-header">
+<h2>Voter Authentication / मतदाता प्रमाणीकरण</h2>
+</div>
 
-    <div class="card hidden animate-entry" id="voting-section">
-        <div class="card-header" style="background-color: #e8f5e9;">
-            <h2>Official Ballot Paper / मतपत्र</h2>
-        </div>
-        <div class="card-body">
-            <p>Logged in as: <span id="current-voter" class="voter-info-tag"></span></p>
-            <p>Please cast your vote for one candidate below. This action is irreversible.</p>
-            
-            <div class="candidate-card">
-                <div><strong>Candidate A</strong><br><small>National Progress Party</small></div>
-                <button class="btn-gov" style="background-color: var(--saffron);" onclick="castVote('Candidate A')">Vote ▶</button>
-            </div>
-            <div class="candidate-card">
-                <div><strong>Candidate B</strong><br><small>Future India Alliance</small></div>
-                <button class="btn-gov" style="background-color: var(--green);" onclick="castVote('Candidate B')">Vote ▶</button>
-            </div>
-        </div>
-    </div>
+<!-- Name + Aadhaar Input -->
+<div class="card-body" id="aadhaar-body">
+<p>Please enter your full name and Aadhaar number.</p>
+<label for="full-name" style="font-weight:bold;">Full Name:</label>
+<input type="text" id="full-name" placeholder="e.g., Rahul Sharma">
+<label for="aadhaar-number" style="font-weight:bold;">Aadhaar Number:</label>
+<input type="number" id="aadhaar-number" placeholder="12-digit Aadhaar">
+<button class="btn-gov" onclick="generateOTP()">Generate OTP ▶</button>
+<div id="error-msg"></div>
+</div>
 
-    <div class="card hidden animate-entry" id="results-section">
-        <div class="card-header" style="background-color: #fff3e0;">
-            <h2>Live Election Statistics / चुनाव परिणाम</h2>
-        </div>
-        <div class="card-body">
-            <p>✔️ Your vote has been securely recorded on the blockchain ledger.</p>
-            <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
-            
-            <div style="text-align: left; margin-top: 20px;">
-                <label><strong>Candidate A (NPP)</strong>: <span id="score-a">0</span> votes</label>
-                <div class="result-bar-container"><div class="result-fill fill-saffron" id="bar-a"></div></div>
-            </div>
-            <div style="text-align: left; margin-top: 25px;">
-                <label><strong>Candidate B (FIA)</strong>: <span id="score-b">0</span> votes</label>
-                <div class="result-bar-container"><div class="result-fill fill-green" id="bar-b"></div></div>
-            </div>
-            
-            <button class="btn-gov" onclick="logout()" style="margin-top: 30px; background-color: #555;">Secure Log Out 🔒</button>
-        </div>
-    </div>
+<!-- OTP Input -->
+<div class="card-body hidden" id="otp-body">
+<p>An OTP has been sent to your registered mobile/email. Please enter it below.</p>
+<label for="otp-input" style="font-weight:bold;">Enter OTP:</label>
+<input type="number" id="otp-input" placeholder="6-digit OTP">
+<button class="btn-gov" onclick="verifyOTP()">Verify OTP ▶</button>
+<div id="otp-error-msg"></div>
+</div>
+</div>
+
+<!-- Voting Section -->
+<div class="card hidden animate-entry" id="voting-section">
+<div class="card-header" style="background-color:#e8f5e9;">
+<h2>Official Ballot Paper / मतपत्र</h2>
+</div>
+<div class="card-body">
+<p>Logged in as: <span id="current-voter" class="voter-info-tag"></span></p>
+<p>Please cast your vote for one candidate below.</p>
+
+<div class="candidate-card">
+<div><strong>Candidate A</strong><br><small>National Progress Party</small></div>
+<button class="btn-gov" style="background-color:var(--saffron);" onclick="castVote('Candidate A')">Vote ▶</button>
+</div>
+<div class="candidate-card">
+<div><strong>Candidate B</strong><br><small>Future India Alliance</small></div>
+<button class="btn-gov" style="background-color:var(--green);" onclick="castVote('Candidate B')">Vote ▶</button>
+</div>
+<div class="candidate-card">
+<div><strong>Candidate C</strong><br><small>People's Reform Front</small></div>
+<button class="btn-gov" style="background-color:var(--purple);" onclick="castVote('Candidate C')">Vote ▶</button>
+</div>
+<div class="candidate-card">
+<div><strong>Candidate D</strong><br><small>Unity & Development Party</small></div>
+<button class="btn-gov" style="background-color:var(--orange);" onclick="castVote('Candidate D')">Vote ▶</button>
+</div>
+</div>
+</div>
+
+<!-- Results Section -->
+<div class="card hidden animate-entry" id="results-section">
+<div class="card-header" style="background-color:#fff3e0;">
+<h2>Live Election Statistics / चुनाव परिणाम</h2>
+</div>
+<div class="card-body">
+<p>✔️ Your vote has been securely recorded on the blockchain ledger.</p>
+<hr style="border:0;border-top:1px solid #eee;margin:20px 0;">
+
+<div style="text-align:left; margin-top:20px;">
+<label><strong>Candidate A (NPP)</strong>: <span id="score-a">0</span> votes</label>
+<div class="result-bar-container"><div class="result-fill fill-saffron" id="bar-a"></div></div>
+</div>
+<div style="text-align:left; margin-top:15px;">
+<label><strong>Candidate B (FIA)</strong>: <span id="score-b">0</span> votes</label>
+<div class="result-bar-container"><div class="result-fill fill-green" id="bar-b"></div></div>
+</div>
+<div style="text-align:left; margin-top:15px;">
+<label><strong>Candidate C (PRF)</strong>: <span id="score-c">0</span> votes</label>
+<div class="result-bar-container"><div class="result-fill fill-purple" id="bar-c"></div></div>
+</div>
+<div style="text-align:left; margin-top:15px;">
+<label><strong>Candidate D (UDP)</strong>: <span id="score-d">0</span> votes</label>
+<div class="result-bar-container"><div class="result-fill fill-orange" id="bar-d"></div></div>
+</div>
+
+<button class="btn-gov" onclick="logout()" style="margin-top:30px;background-color:#555;">Secure Log Out 🔒</button>
+</div>
+</div>
 </main>
 
 <footer>
-    Does not represent any actual government entity. <br>
-    © 2023 Election Commission of India Placeholder. All rights reserved. | Privacy Policy | Terms of Use
+Does not represent any actual government entity. <br>
+© 2023 Election Commission of India Placeholder. All rights reserved. | Privacy Policy | Terms of Use
 </footer>
 
 <script>
-    // --- MOCK SECURE BACKEND SIMULATION ---
-    // NOTE: In a real deployment, this data and logic exist ONLY on a secure Java/Node server.
-    const validVoterIDs = ['VOTE123', 'VOTE456', 'VOTE789', 'IND001', 'IND002'];
-    
-    // State management (In-memory browser storage for prototype)
-    let currentVoterID = null;
-    // Initialize votes if not in local storage, otherwise read them
-    let votes = JSON.parse(localStorage.getItem('voteCounts')) || { 'Candidate A': 0, 'Candidate B': 0 };
-    let hasVotedList = JSON.parse(localStorage.getItem('votedUsers')) || [];
+// Mock Aadhaar Database
+const validAadhaar = [
+{ name:'Rahul Sharma', aadhaar:'123456789012' },
+{ name:'Anita Verma', aadhaar:'987654321098' },
+{ name:'Sunil Patil', aadhaar:'111122223333' },
+{ name:'Priya Singh', aadhaar:'444455556666' }
+];
 
-    // --- LOGIC FUNCTIONS ---
+let currentVoter = null;
+let generatedOTP = null;
+let votes = JSON.parse(localStorage.getItem('voteCounts')) || {'Candidate A':0,'Candidate B':0,'Candidate C':0,'Candidate D':0};
+let hasVotedList = JSON.parse(localStorage.getItem('votedUsers')) || [];
 
-    function authenticateVoter() {
-        const inputField = document.getElementById('voter-id');
-        const inputId = inputField.value.trim().toUpperCase();
-        const errorMsg = document.getElementById('error-msg');
+function generateOTP(){
+    const name = document.getElementById('full-name').value.trim();
+    const aadhaar = document.getElementById('aadhaar-number').value.trim();
+    const errorMsg = document.getElementById('error-msg');
+    errorMsg.innerText='';
 
-        // Reset error
-        errorMsg.innerText = "";
-        inputField.style.borderColor = "#ccc";
+    if(name==='' || aadhaar===''){errorMsg.innerText='⚠ Enter both Name and Aadhaar'; return;}
+    const valid = validAadhaar.find(u=>u.name.toLowerCase()===name.toLowerCase() && u.aadhaar===aadhaar);
+    if(!valid){errorMsg.innerText='⚠ Invalid Name or Aadhaar'; return;}
+    if(hasVotedList.includes(aadhaar)){errorMsg.innerText='⚠ Already voted'; return;}
 
-        // Basic Validation
-        if(inputId === "") {
-            showError("Please enter your Voter ID.");
-            return;
-        }
+    currentVoter = `${name} (${aadhaar})`;
+    generatedOTP = Math.floor(100000+Math.random()*900000);
+    console.log('OTP (for demo):', generatedOTP);
 
-        // 1. Verify Authenticity (Mocked)
-        if (!validVoterIDs.includes(inputId)) {
-            showError("Authentication Failed: Invalid Voter ID not found in electoral roll.");
-            return;
-        }
+    document.getElementById('aadhaar-body').classList.add('hidden');
+    document.getElementById('otp-body').classList.remove('hidden');
+}
 
-        // 2. Prevent Duplicate Voting (Check against backend ledger list)
-        if (hasVotedList.includes(inputId)) {
-            showError("Access Denied: A vote has already been cast using this EPIC ID.");
-            return;
-        }
+function verifyOTP(){
+    const otpInput = document.getElementById('otp-input').value.trim();
+    const otpError = document.getElementById('otp-error-msg');
+    otpError.innerText='';
+    if(otpInput===''){otpError.innerText='⚠ Enter OTP'; return;}
+    if(otpInput != generatedOTP){otpError.innerText='⚠ Incorrect OTP'; return;}
 
-        // Authentication Successful
-        currentVoterID = inputId;
-        document.getElementById('current-voter').innerText = currentVoterID;
-        
-        // Smooth Transition: Hide Login -> Show Ballot
-        switchSection('login-section', 'voting-section');
+    document.getElementById('current-voter').innerText=currentVoter;
+    switchSection('login-section','voting-section');
+}
+
+function castVote(candidate){
+    const aadhaar = currentVoter.split('(')[1].replace(')','');
+    if(hasVotedList.includes(aadhaar) || currentVoter===null){alert('Unauthorized'); logout(); return;}
+    if(confirm('Confirm vote for '+candidate+'?')){
+        votes[candidate]++;
+        hasVotedList.push(aadhaar);
+        localStorage.setItem('voteCounts',JSON.stringify(votes));
+        localStorage.setItem('votedUsers',JSON.stringify(hasVotedList));
+        updateResultsUI();
+        switchSection('voting-section','results-section');
     }
+}
 
-    function castVote(candidate) {
-        // Double-check security constraint before committing
-        if (hasVotedList.includes(currentVoterID) || currentVoterID === null) {
-             alert("Security Alert: Unauthorized voting attempt.");
-             logout();
-             return;
-        }
+function switchSection(hideId, showId){
+    document.getElementById(hideId).classList.add('hidden');
+    document.getElementById(showId).classList.remove('hidden');
+    const showEl=document.getElementById(showId);
+    showEl.classList.remove('animate-entry'); void showEl.offsetWidth;
+    showEl.classList.add('animate-entry');
+}
 
-        if(confirm("Confirm vote for " + candidate + "? This cannot be undone.")) {
-            // --- COMMIT TRANSACTION ---
-            votes[candidate]++;
-            hasVotedList.push(currentVoterID);
-            
-            // Save to mock "database" (localStorage for persistence across refresh)
-            localStorage.setItem('voteCounts', JSON.stringify(votes));
-            localStorage.setItem('votedUsers', JSON.stringify(hasVotedList));
+function updateResultsUI(){
+    const total=votes['Candidate A']+votes['Candidate B']+votes['Candidate C']+votes['Candidate D'];
+    document.getElementById('score-a').innerText=votes['Candidate A'];
+    document.getElementById('score-b').innerText=votes['Candidate B'];
+    document.getElementById('score-c').innerText=votes['Candidate C'];
+    document.getElementById('score-d').innerText=votes['Candidate D'];
 
-            updateResultsUI();
-            
-            // Smooth Transition: Hide Ballot -> Show Results
-            switchSection('voting-section', 'results-section');
-        }
-    }
+    document.getElementById('bar-a').style.width=total===0?0:(votes['Candidate A']/total*100)+'%';
+    document.getElementById('bar-b').style.width=total===0?0:(votes['Candidate B']/total*100)+'%';
+    document.getElementById('bar-c').style.width=total===0?0:(votes['Candidate C']/total*100)+'%';
+    document.getElementById('bar-d').style.width=total===0?0:(votes['Candidate D']/total*100)+'%';
+}
 
-    // Helper for smooth transitions and animations
-    function switchSection(hideId, showId) {
-        const hideEl = document.getElementById(hideId);
-        const showEl = document.getElementById(showId);
+function logout(){
+    currentVoter=null; generatedOTP=null;
+    document.getElementById('full-name').value='';
+    document.getElementById('aadhaar-number').value='';
+    document.getElementById('otp-input').value='';
+    document.getElementById('error-msg').innerText='';
+    document.getElementById('otp-error-msg').innerText='';
+    document.getElementById('aadhaar-body').classList.remove('hidden');
+    document.getElementById('otp-body').classList.add('hidden');
+    switchSection('results-section','login-section');
+}
 
-        hideEl.classList.add('hidden');
-        showEl.classList.remove('hidden');
-        
-        // Re-trigger animation for the new section
-        showEl.classList.remove('animate-entry');
-        void showEl.offsetWidth; // Trigger reflow to restart CSS animation
-        showEl.classList.add('animate-entry');
-    }
-
-
-    function updateResultsUI() {
-        // Real-time result computation
-        const totalVotes = votes['Candidate A'] + votes['Candidate B'];
-        
-        document.getElementById('score-a').innerText = votes['Candidate A'].toLocaleString();
-        document.getElementById('score-b').innerText = votes['Candidate B'].toLocaleString();
-
-        // Calculate percentages
-        // Avoid division by zero
-        const pctA = totalVotes === 0 ? 0 : ((votes['Candidate A'] / totalVotes) * 100).toFixed(1);
-        const pctB = totalVotes === 0 ? 0 : ((votes['Candidate B'] / totalVotes) * 100).toFixed(1);
-
-        // Animate widths
-        document.getElementById('bar-a').style.width = pctA + '%';
-        document.getElementById('bar-b').style.width = pctB + '%';
-    }
-
-    function showError(msg) {
-         const errorMsg = document.getElementById('error-msg');
-         errorMsg.innerText = "⚠ " + msg;
-         document.getElementById('voter-id').style.borderColor = "#d32f2f";
-         // Shake animation for error
-         const card = document.getElementById('login-section');
-         card.style.animation = 'none';
-         void card.offsetWidth; // trigger reflow
-         card.style.animation = 'shake 0.4s linear';
-    }
-
-    function logout() {
-        currentVoterID = null;
-        document.getElementById('voter-id').value = '';
-        document.getElementById('error-msg').innerText = '';
-        document.getElementById('voter-id').style.borderColor = "#ccc";
-        switchSection('results-section', 'login-section');
-    }
-
-    // Add shake keyframes dynamically
-    const styleSheet = document.styleSheets[0];
-    styleSheet.insertRule(`
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            20%, 60% { transform: translateX(-10px); }
-            40%, 80% { transform: translateX(10px); }
-        }
-    `, styleSheet.cssRules.length);
-
-    // Initialize results on page load (in case data exists in localstorage)
-    updateResultsUI();
+updateResultsUI();
 </script>
 
 </body>
