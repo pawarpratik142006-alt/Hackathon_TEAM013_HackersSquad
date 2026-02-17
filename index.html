@@ -2,187 +2,281 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>National E-Voting Portal</title>
+<title>E-Voting Portal</title>
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
 <style>
+/* ===== CLEAN BLACK THEME ===== */
 body{
 margin:0;
-font-family:'Segoe UI',Arial;
-background:linear-gradient(120deg,#0b3d91,#001f4d);
-height:100vh;
+font-family:'Poppins',sans-serif;
+background:#0d0d0d;
+color:#00ffcc;
+overflow:hidden;
+}
+
+/* ===== NAVBAR ===== */
+.navbar{
+background:#001a26;
+color:#ffffff;
+padding:25px 50px;
+font-size:22px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+font-weight:700;
+border-bottom:1px solid #00ffcc40;
+position:relative;
+}
+
+.title{
+font-family:'Orbitron',sans-serif;
+font-size:28px;
+display:flex;
+align-items:center;
+gap:10px;
+}
+
+/* Indian Flag in Navbar */
+.flag{
+width:30px;
+height:20px;
+border:1px solid #fff;
+display:inline-block;
+background:linear-gradient(to bottom, #ff9933 33%, #ffffff 33% 66%, #128807 66%);
+border-radius:2px;
+margin-right:8px;
+}
+
+/* ===== CARD - GLASSMORPHISM ===== */
+.container{
 display:flex;
 justify-content:center;
-align-items:center;
-color:white;
+margin-top:60px;
 }
 
 .card{
-background:white;
-color:black;
-width:400px;
-padding:30px;
-border-radius:14px;
-box-shadow:0 10px 35px rgba(0,0,0,0.4);
-animation:fade 0.7s ease;
+background:rgba(0,0,0,0.7);
+backdrop-filter:blur(12px);
+width:500px;
+padding:40px;
+border-radius:16px;
+box-shadow:0 0 35px #00ffcc40;
+position:relative;
+overflow:hidden;
+border:1px solid #00ffcc30;
+min-height:450px;
+transition:all 0.3s ease;
 }
 
-@keyframes fade{
-from{opacity:0;transform:translateY(25px);}
-to{opacity:1;}
-}
-
-h2{text-align:center;color:#0b3d91;}
-
-input,button{
+/* SCAN LINE */
+.scan{
+height:4px;
 width:100%;
-padding:12px;
-margin:8px 0;
-border-radius:6px;
-border:1px solid #ccc;
-font-size:14px;
+background:linear-gradient(to right,transparent,#00ffcc,transparent);
+position:absolute;
+top:0;
+animation:scanMove 2s infinite;
+}
+@keyframes scanMove{
+0%{top:0;}
+100%{top:100%;}
 }
 
+/* HEADINGS */
+h2{
+text-align:center;
+color:#00ffcc;
+font-weight:700;
+font-size:24px;
+font-family:'Orbitron',sans-serif;
+}
+
+/* INPUTS */
+input{
+width:100%;
+padding:14px;
+margin:12px 0;
+border-radius:10px;
+border:1px solid #004466;
+background:rgba(0,0,0,0.4);
+color:#00ffcc;
+font-size:16px;
+font-family:'Poppins',sans-serif;
+}
+
+input:focus{
+outline:none;
+box-shadow:0 0 12px #00ffcc;
+}
+
+/* BUTTON */
 button{
-background:#0b3d91;
-color:white;
+width:100%;
+padding:16px;
+margin:14px 0;
+border-radius:10px;
 border:none;
+background:#002233;
+color:#00ffcc;
 cursor:pointer;
+font-size:16px;
+font-weight:600;
 transition:0.3s;
+position:relative;
+overflow:hidden;
+font-family:'Orbitron',sans-serif;
 }
 
 button:hover{
-background:#072c6b;
-transform:scale(1.03);
+background:#004466;
+transform:scale(1.04);
+box-shadow:0 0 15px #00ffcc;
 }
 
-.finger{
-width:80px;
-height:80px;
-border:3px solid #0b3d91;
-border-radius:50%;
-margin:10px auto;
-animation:pulse 1.5s infinite;
-}
-
-@keyframes pulse{
-0%{box-shadow:0 0 0 0 #0b3d91;}
-70%{box-shadow:0 0 0 20px transparent;}
-}
-
+/* PARTY LIST */
 .party{
 display:flex;
 justify-content:space-between;
-padding:10px;
-border:1px solid #ddd;
-margin:8px 0;
-border-radius:8px;
+padding:16px;
+border:1px solid #004466;
+border-radius:12px;
+margin:14px 0;
 cursor:pointer;
-transition:0.2s;
+transition:0.25s;
+background:rgba(0,0,0,0.4);
+font-family:'Orbitron',sans-serif;
+font-size:16px;
+font-weight:600;
 }
 
 .party:hover{
-background:#eef3ff;
-transform:translateX(5px);
+background:#001a26;
+transform:translateX(8px);
+box-shadow:0 0 12px #00ffcc;
 }
 
 .link{
 text-align:center;
-margin-top:10px;
-color:#0b3d91;
+margin-top:14px;
+color:#00ffcc;
+font-weight:600;
 cursor:pointer;
-font-weight:bold;
+font-family:'Poppins',sans-serif;
+font-size:16px;
+}
+
+/* FINGERPRINT */
+.finger{
+width:90px;
+height:90px;
+border:3px solid #00ffcc;
+border-radius:50%;
+margin:20px auto;
+position:relative;
+animation:pulse 1.5s infinite;
+}
+.finger:before{
+content:"";
+position:absolute;
+width:100%;
+height:100%;
+border-radius:50%;
+border:2px dashed #00ffcc;
+animation:rotate 6s linear infinite;
+}
+@keyframes pulse{
+0%{box-shadow:0 0 0 0 #00ffcc;}
+70%{box-shadow:0 0 0 24px transparent;}
+}
+@keyframes rotate{
+100%{transform:rotate(360deg);}
 }
 </style>
 </head>
 <body>
 
-<div class="card" id="app"></div>
+<div class="navbar">
+<div class="title"><span class="flag"></span>National E-Voting Hackathon</div>
+<div>Tech Innovation Cell</div>
+</div>
+
+<div class="container">
+<div class="card" id="app">
+<div class="scan"></div>
+</div>
+</div>
 
 <script>
-
-let votes={
-"BJP":0,
-"Congress":0,
-"NCP":0,
-"Shiv Sena":0,
-"AAP":0
-};
-
+/* VOTING SYSTEM MULTI-PAGE */
+let votes={"BJP":0,"Congress":0,"NCP":0,"Shiv Sena":0,"AAP":0};
 let voted=false;
+const app=document.getElementById('app');
 
-function showLogin(){
-app.innerHTML=`
-<h2>🇮🇳 Voter Login</h2>
-<div class="finger"></div>
-<input id="name" placeholder="Full Name">
-<input id="age" placeholder="Age">
-<input id="aadhaar" placeholder="Aadhaar Number">
-<button onclick="login()">Login</button>
-<div class="link" onclick="showAdminLogin()">Admin Login</div>
-`;
+function showPage(page){
+switch(page){
+  case 'login':
+    app.innerHTML=`
+    <div class="scan"></div>
+    <h2>Secure Voter Authentication</h2>
+    <div class="finger"></div>
+    <input id="name" placeholder="Full Name">
+    <input id="age" placeholder="Age">
+    <input id="aadhaar" placeholder="Aadhaar Number">
+    <button onclick="validateLogin()">Next</button>
+    `;
+    break;
+  case 'instructions':
+    app.innerHTML=`
+    <div class="scan"></div>
+    <h2>Voting Instructions</h2>
+    <p>Please ensure your details are correct and vote carefully. Once submitted, your vote cannot be changed.</p>
+    <button onclick="showPage('vote')">Start Voting</button>
+    `;
+    break;
+  case 'vote':
+    app.innerHTML=`
+    <div class="scan"></div>
+    <h2>Select Party</h2>
+    <div class="party" onclick="confirmVote('BJP')">BJP</div>
+    <div class="party" onclick="confirmVote('Congress')">Congress</div>
+    <div class="party" onclick="confirmVote('NCP')">NCP</div>
+    <div class="party" onclick="confirmVote('Shiv Sena')">Shiv Sena</div>
+    <div class="party" onclick="confirmVote('AAP')">AAP</div>
+    <button onclick="showPage('instructions')">Back</button>
+    `;
+    break;
+  case 'thankyou':
+    app.innerHTML=`
+    <div class="scan"></div>
+    <h2>Thank You for Voting!</h2>
+    <p>Your vote has been securely submitted.</p>
+    <button onclick="showPage('login')">Back to Home</button>
+    `;
+    break;
+}
 }
 
-function login(){
+function validateLogin(){
 let age=document.getElementById("age").value;
 if(age>=18){
-showVote();
+  showPage('instructions');
 }else{
-alert("18+ required to vote");
+  alert("Only 18+ voters allowed");
 }
 }
 
-function showVote(){
-app.innerHTML=`
-<h2>Cast Your Vote</h2>
-
-<div class="party" onclick="vote('BJP')">BJP 🪷</div>
-<div class="party" onclick="vote('Congress')">Congress ✋</div>
-<div class="party" onclick="vote('NCP')">NCP ⏰</div>
-<div class="party" onclick="vote('Shiv Sena')">Shiv Sena 🏹</div>
-<div class="party" onclick="vote('AAP')">AAP 🧹</div>
-
-<button onclick="showResult()">View Live Result</button>
-`;
-}
-
-function vote(party){
-if(voted){
-alert("You already voted");
-return;
-}
+function confirmVote(party){
+if(voted){alert("You already voted");return;}
 votes[party]++;
 voted=true;
-alert("Vote Submitted Successfully!");
+showPage('thankyou');
 }
 
-function showResult(){
-let resultHTML="<h2>Live Vote Counting</h2>";
-for(let party in votes){
-resultHTML+=party+" : "+votes[party]+"<br>";
-}
-resultHTML+=`<br><button onclick="showVote()">Back</button>`;
-app.innerHTML=resultHTML;
-}
-
-function showAdminLogin(){
-app.innerHTML=`
-<h2>Admin Login</h2>
-<input type="password" id="adminpass" placeholder="Enter Admin Password">
-<button onclick="adminLogin()">Login</button>
-`;
-}
-
-function adminLogin(){
-let pass=document.getElementById("adminpass").value;
-if(pass==="admin123"){
-showResult();
-}else{
-alert("Wrong Password");
-}
-}
-
-showLogin();
-
+// Start at login page
+showPage('login');
 </script>
 
 </body>
