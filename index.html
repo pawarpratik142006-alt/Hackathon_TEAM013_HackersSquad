@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
 <title>E-Voting India</title>
@@ -8,24 +8,8 @@ body {
   margin: 0;
   font-family: 'Segoe UI', sans-serif;
   background: linear-gradient(120deg,#0a1931,#1f4068,#16213e);
-  height: 100vh;
-  overflow: hidden;
   color: white;
-}
-
-/* Soft floating animation background */
-body::before {
-  content: "";
-  position: absolute;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.08), transparent 40%),
-              radial-gradient(circle at 80% 60%, rgba(255,255,255,0.08), transparent 40%);
-  animation: moveBg 12s infinite linear;
-}
-@keyframes moveBg {
-  0% { transform: translate(0,0); }
-  100% { transform: translate(-50px,-50px); }
+  overflow-x: hidden;
 }
 
 /* Fixed Logo */
@@ -37,50 +21,42 @@ body::before {
   font-weight: bold;
 }
 
-/* Login Card */
+/* Card */
 .card {
-  position: relative;
-  width: 350px;
+  width: 380px;
   margin: 80px auto;
   padding: 30px;
   background: rgba(255,255,255,0.08);
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(12px);
   border-radius: 15px;
   box-shadow: 0 0 20px rgba(0,0,0,0.4);
-  animation: fadeIn 1.2s ease;
+  animation: fadeIn 1s ease;
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(40px);}
-  to { opacity: 1; transform: translateY(0);}
+  from {opacity:0; transform:translateY(40px);}
+  to {opacity:1; transform:translateY(0);}
 }
 
-h2 {
-  text-align: center;
-  margin-bottom: 20px;
-}
+h2 { text-align:center; }
 
-/* Inputs */
 input {
   width: 100%;
   padding: 12px;
   margin: 8px 0;
-  border: none;
   border-radius: 8px;
-  outline: none;
-  font-size: 14px;
+  border: none;
 }
 
-/* Buttons */
 button {
   width: 100%;
   padding: 12px;
-  margin-top: 12px;
+  margin-top: 10px;
   background: linear-gradient(45deg,#00c6ff,#0072ff);
   border: none;
-  color: white;
-  font-size: 16px;
   border-radius: 8px;
+  color: white;
+  font-size: 15px;
   cursor: pointer;
   transition: 0.3s;
 }
@@ -89,27 +65,22 @@ button:hover {
   transform: scale(1.05);
 }
 
-/* Fingerprint animation */
-.fingerprint {
-  width: 70px;
-  height: 70px;
-  border: 3px solid #00c6ff;
-  border-radius: 50%;
-  margin: 15px auto;
-  animation: pulse 1.5s infinite;
+.party {
+  background: rgba(255,255,255,0.1);
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
 }
 
-@keyframes pulse {
-  0% { box-shadow: 0 0 5px #00c6ff; }
-  50% { box-shadow: 0 0 25px #00c6ff; }
-  100% { box-shadow: 0 0 5px #00c6ff; }
+.party:hover {
+  background: rgba(0,198,255,0.3);
 }
 
-/* Success message */
 #msg {
-  text-align: center;
-  margin-top: 10px;
-  font-size: 14px;
+  text-align:center;
+  margin-top:10px;
 }
 </style>
 </head>
@@ -117,22 +88,33 @@ button:hover {
 
 <div class="logo">🇮🇳 E-Voting System</div>
 
-<div class="card">
+<!-- LOGIN PAGE -->
+<div class="card" id="loginPage">
   <h2>Voter Login</h2>
 
   <input type="text" id="name" placeholder="Full Name" required>
   <input type="number" id="age" placeholder="Age" required>
   <input type="text" id="aadhar" placeholder="Aadhaar Card Number" maxlength="12" required>
 
-  <div class="fingerprint"></div>
-
-  <button onclick="verify()">Verify Identity</button>
-  <button onclick="login()">Proceed to Vote</button>
+  <button onclick="verify()">Verify & Login</button>
 
   <div id="msg"></div>
 </div>
 
+<!-- VOTING PAGE -->
+<div class="card" id="votingPage" style="display:none;">
+  <h2>Select Your Party</h2>
+
+  <div class="party" onclick="vote('Party A')">🟠 Party A</div>
+  <div class="party" onclick="vote('Party B')">🔵 Party B</div>
+  <div class="party" onclick="vote('Party C')">🟢 Party C</div>
+
+  <div id="voteMsg"></div>
+</div>
+
 <script>
+let voted = false;
+
 function verify(){
   let age = document.getElementById("age").value;
   let aadhar = document.getElementById("aadhar").value;
@@ -147,11 +129,22 @@ function verify(){
     return;
   }
 
-  document.getElementById("msg").innerHTML = "✅ Verification Successful";
+  document.getElementById("msg").innerHTML = "✅ Login Successful";
+
+  setTimeout(()=>{
+    document.getElementById("loginPage").style.display = "none";
+    document.getElementById("votingPage").style.display = "block";
+  },1000);
 }
 
-function login(){
-  document.getElementById("msg").innerHTML = "🔐 Secure Login Activated...";
+function vote(party){
+  if(voted){
+    document.getElementById("voteMsg").innerHTML = "⚠️ You have already voted!";
+    return;
+  }
+
+  voted = true;
+  document.getElementById("voteMsg").innerHTML = "🎉 Vote submitted successfully for " + party;
 }
 </script>
 
