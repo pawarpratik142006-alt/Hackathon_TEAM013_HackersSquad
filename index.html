@@ -3,36 +3,54 @@
 <head>
 <meta charset="UTF-8">
 <title>National E-Voting Portal</title>
+
 <style>
 body{
   margin:0;
   font-family:'Segoe UI', Arial;
-  background:#f4f7fb;
+  background:linear-gradient(120deg,#eef2f7,#f8fbff);
+  overflow-x:hidden;
+}
+
+/* Soft animated background */
+body::before{
+  content:"";
+  position:fixed;
+  width:200%;
+  height:200%;
+  background:radial-gradient(circle at 20% 30%, rgba(11,61,145,0.06), transparent 40%),
+             radial-gradient(circle at 80% 70%, rgba(11,61,145,0.06), transparent 40%);
+  animation:moveBg 15s linear infinite;
+  z-index:-1;
+}
+@keyframes moveBg{
+  0%{transform:translate(0,0);}
+  100%{transform:translate(-50px,-50px);}
 }
 
 /* Header */
 .header{
   background:#0b3d91;
   color:white;
-  padding:15px 25px;
+  padding:16px 28px;
   font-size:22px;
-  font-weight:bold;
+  font-weight:600;
+  box-shadow:0 2px 8px rgba(0,0,0,0.1);
 }
 
 /* Card */
 .card{
-  width:450px;
+  width:470px;
   margin:60px auto;
-  padding:30px;
+  padding:32px;
   background:white;
-  border-radius:12px;
-  box-shadow:0 8px 25px rgba(0,0,0,0.1);
-  animation:fadeIn .6s ease;
+  border-radius:14px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.08);
+  animation:cardEnter .7s ease;
 }
-
-@keyframes fadeIn{
-  from{opacity:0; transform:translateY(30px);}
-  to{opacity:1; transform:translateY(0);}
+@keyframes cardEnter{
+  from{opacity:0; transform:translateY(30px) scale(.98);}
+  to{opacity:1; transform:translateY(0) scale(1);}
 }
 
 h2{
@@ -40,14 +58,22 @@ h2{
   color:#0b3d91;
 }
 
+/* Inputs */
 input{
   width:100%;
   padding:12px;
   margin:8px 0;
-  border-radius:6px;
-  border:1px solid #ccc;
+  border-radius:7px;
+  border:1px solid #d8dbe2;
+  transition:.25s;
+}
+input:focus{
+  border-color:#0b3d91;
+  box-shadow:0 0 0 3px rgba(11,61,145,0.08);
+  outline:none;
 }
 
+/* Buttons */
 button{
   width:100%;
   padding:12px;
@@ -55,47 +81,48 @@ button{
   background:#0b3d91;
   color:white;
   border:none;
-  border-radius:6px;
+  border-radius:7px;
   cursor:pointer;
-  transition:.3s;
+  transition:.25s;
 }
-
 button:hover{
-  background:#092c6a;
+  background:#082c6e;
+  transform:translateY(-1px);
 }
 
-/* Party box */
+/* Party cards */
 .party{
   display:flex;
   align-items:center;
-  border:1px solid #ddd;
-  padding:10px;
-  margin:10px 0;
-  border-radius:8px;
+  border:1px solid #e3e6ed;
+  padding:12px;
+  margin:12px 0;
+  border-radius:10px;
   cursor:pointer;
-  transition:.2s;
+  transition:.25s;
 }
-
 .party:hover{
-  background:#eef3ff;
+  background:#f4f7ff;
+  transform:translateX(6px);
+  box-shadow:0 4px 12px rgba(0,0,0,0.06);
 }
-
 .party img{
-  width:40px;
-  height:40px;
+  width:45px;
+  height:45px;
   margin-right:15px;
 }
 
+/* Result */
 .result{
+  background:#f3f6ff;
+  padding:12px;
   margin-top:10px;
-  padding:10px;
-  background:#f0f4ff;
   border-radius:8px;
 }
 
-#msg,#voteMsg{
+#msg,#voteMsg,#adminMsg{
   text-align:center;
-  margin-top:10px;
+  margin-top:12px;
   font-weight:500;
 }
 </style>
@@ -104,7 +131,7 @@ button:hover{
 
 <div class="header">🇮🇳 National E-Voting Portal</div>
 
-<!-- LOGIN -->
+<!-- VOTER LOGIN -->
 <div class="card" id="loginPage">
 <h2>Voter Authentication</h2>
 
@@ -113,89 +140,119 @@ button:hover{
 <input type="text" id="aadhar" placeholder="Aadhaar Number" maxlength="12">
 
 <button onclick="sendOTP()">Send OTP</button>
-
 <input type="text" id="otpInput" placeholder="Enter OTP">
 <button onclick="verifyOTP()">Verify & Continue</button>
 
 <div id="msg"></div>
 </div>
 
-<!-- VOTING -->
+<!-- VOTING PAGE -->
 <div class="card" id="votingPage" style="display:none;">
 <h2>Cast Your Vote</h2>
 
-<div class="party" onclick="vote('A')">
-  <img src="https://cdn-icons-png.flaticon.com/512/197/197419.png">
-  Party A
+<div class="party" onclick="vote('BJP')">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/BJP_Logo.png">
+  Bharatiya Janata Party (BJP)
 </div>
 
-<div class="party" onclick="vote('B')">
-  <img src="https://cdn-icons-png.flaticon.com/512/197/197408.png">
-  Party B
+<div class="party" onclick="vote('CONG')">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Indian_National_Congress_hand_logo.png">
+  Indian National Congress
 </div>
 
-<div class="party" onclick="vote('C')">
-  <img src="https://cdn-icons-png.flaticon.com/512/197/197484.png">
-  Party C
+<div class="party" onclick="vote('NCP')">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/0/0e/NCP_symbol.png">
+  Nationalist Congress Party
 </div>
 
 <div id="voteMsg"></div>
 
 <h2>Live Results</h2>
-<div class="result">Party A Votes: <span id="countA">0</span></div>
-<div class="result">Party B Votes: <span id="countB">0</span></div>
-<div class="result">Party C Votes: <span id="countC">0</span></div>
+<div class="result">BJP Votes: <span id="bjp">0</span></div>
+<div class="result">Congress Votes: <span id="cong">0</span></div>
+<div class="result">NCP Votes: <span id="ncp">0</span></div>
+</div>
+
+<!-- ADMIN LOGIN -->
+<div class="card" id="adminLogin">
+<h2>Admin Login</h2>
+
+<input type="text" id="adminUser" placeholder="Username">
+<input type="password" id="adminPass" placeholder="Password">
+
+<button onclick="adminLogin()">Login as Admin</button>
+<div id="adminMsg"></div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div class="card" id="adminPanel" style="display:none;">
+<h2>Admin Result Panel</h2>
+
+<div class="result">Total BJP Votes: <span id="abjp">0</span></div>
+<div class="result">Total Congress Votes: <span id="acong">0</span></div>
+<div class="result">Total NCP Votes: <span id="ancp">0</span></div>
 </div>
 
 <script>
 let otp="";
 let voted=false;
-let countA=0,countB=0,countC=0;
 
+let BJP=0, CONG=0, NCP=0;
+
+/* OTP */
 function sendOTP(){
-  if(age.value<18){
-    msg.innerHTML="❌ Must be 18+ to vote";
-    return;
-  }
-
-  if(aadhar.value.length!=12){
-    msg.innerHTML="❌ Invalid Aadhaar Number";
-    return;
-  }
+  if(age.value<18){ msg.innerHTML="❌ Must be 18+"; return; }
+  if(aadhar.value.length!=12){ msg.innerHTML="❌ Invalid Aadhaar"; return; }
 
   otp=Math.floor(1000+Math.random()*9000);
-  msg.innerHTML="OTP Sent (Demo): "+otp;
+  msg.innerHTML="OTP (Demo): "+otp;
 }
 
+/* Verify */
 function verifyOTP(){
   if(otpInput.value==otp){
     msg.innerHTML="✅ Verified Successfully";
     setTimeout(()=>{
       loginPage.style.display="none";
       votingPage.style.display="block";
-    },800);
+    },700);
   }else{
     msg.innerHTML="❌ Incorrect OTP";
   }
 }
 
+/* Vote */
 function vote(party){
-  if(voted){
-    voteMsg.innerHTML="⚠️ You already voted";
-    return;
-  }
+  if(voted){ voteMsg.innerHTML="⚠️ Already voted"; return; }
 
   voted=true;
 
-  if(party=="A") countA++;
-  if(party=="B") countB++;
-  if(party=="C") countC++;
+  if(party=="BJP") BJP++;
+  if(party=="CONG") CONG++;
+  if(party=="NCP") NCP++;
 
-  countAEl.innerText=countA;
-  countBEl.innerText=countB;
-  countCEl.innerText=countC;
+  bjp.innerText=BJP;
+  cong.innerText=CONG;
+  ncp.innerText=NCP;
+
+  abjp.innerText=BJP;
+  acong.innerText=CONG;
+  ancp.innerText=NCP;
 
   voteMsg.innerHTML="🎉 Vote submitted successfully!";
+}
+
+/* Admin */
+function adminLogin(){
+  if(adminUser.value=="admin" && adminPass.value=="1234"){
+    adminMsg.innerHTML="✅ Admin Login Success";
+    setTimeout(()=>{
+      adminLogin.style.display="none";
+      adminPanel.style.display="block";
+    },600);
+  }else{
+    adminMsg.innerHTML="❌ Wrong Admin Credentials";
+  }
 }
 </script>
 
