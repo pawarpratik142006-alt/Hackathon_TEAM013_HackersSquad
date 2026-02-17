@@ -11,6 +11,30 @@ body{
   font-family:Segoe UI, sans-serif;
   background:linear-gradient(120deg,#0a1931,#1f4068,#16213e);
   color:white;
+=======
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(120deg,#0a1931,#1f4068,#16213e);
+  height: 100vh;
+  overflow: hidden;
+  color: white;
+}
+
+/* Soft floating animation background */
+body::before {
+  content: "";
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.08), transparent 40%),
+              radial-gradient(circle at 80% 60%, rgba(255,255,255,0.08), transparent 40%);
+  animation: moveBg 12s infinite linear;
+}
+@keyframes moveBg {
+  0% { transform: translate(0,0); }
+  100% { transform: translate(-50px,-50px); }
+>>>>>>> Stashed changes
 }
 
 /* Logo */
