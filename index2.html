@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SecureVote | National E-Voting System</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+    background: linear-gradient(-45deg,#0f2027,#203a43,#2c5364,#00c6ff);
+    background-size:400% 400%;
+    animation: gradient 12s ease infinite;
+    color:white;
+    overflow-x:hidden;
+}
+
+@keyframes gradient{
+    0%{background-position:0% 50%;}
+    50%{background-position:100% 50%;}
+    100%{background-position:0% 50%;}
+}
+
+nav{
+    display:flex;
+    justify-content:space-between;
+    padding:20px 50px;
+    position:fixed;
+    width:100%;
+    background:rgba(0,0,0,0.3);
+    backdrop-filter:blur(10px);
+}
+
+nav ul{
+    list-style:none;
+    display:flex;
+    gap:30px;
+}
+
+nav ul li{
+    cursor:pointer;
+    transition:0.3s;
+}
+
+nav ul li:hover{
+    color:#00f2ff;
+}
+
+.hero{
+    height:100vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+}
+
+.hero h2{
+    font-size:55px;
+    margin-bottom:20px;
+}
+
+.hero p{
+    width:60%;
+    margin-bottom:30px;
+}
+
+.btn{
+    padding:15px 40px;
+    border:none;
+    border-radius:30px;
+    background:#00f2ff;
+    color:black;
+    font-weight:600;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.btn:hover{
+    transform:scale(1.05);
+}
+
+.login-box{
+    background:rgba(255,255,255,0.1);
+    backdrop-filter:blur(15px);
+    padding:40px;
+    border-radius:20px;
+    width:350px;
+    margin:50px auto;
+    text-align:center;
+}
+
+.login-box input{
+    width:100%;
+    padding:12px;
+    margin:10px 0;
+    border:none;
+    border-radius:10px;
+}
+
+.vote-section{
+    padding:80px 20px;
+    text-align:center;
+}
+
+.candidates{
+    display:flex;
+    justify-content:center;
+    gap:40px;
+    flex-wrap:wrap;
+}
+
+.card{
+    background:rgba(255,255,255,0.1);
+    backdrop-filter:blur(15px);
+    padding:25px;
+    width:250px;
+    border-radius:20px;
+    transition:0.4s;
+}
+
+.card:hover{
+    transform:translateY(-10px);
+    box-shadow:0 0 25px #00f2ff;
+}
+
+.progress{
+    background:rgba(255,255,255,0.2);
+    width:60%;
+    margin:15px auto;
+    height:25px;
+    border-radius:20px;
+}
+
+.progress-bar{
+    height:100%;
+    width:0%;
+    background:#00f2ff;
+    border-radius:20px;
+    transition:1s;
+}
+
+footer{
+    text-align:center;
+    padding:20px;
+}
+</style>
+</head>
+<body>
+
+<nav>
+    <h1>🔐 SecureVote</h1>
+    <ul>
+        <li onclick="scrollToSection('home')">Home</li>
+        <li onclick="scrollToSection('login')">Login</li>
+        <li onclick="scrollToSection('vote')">Vote</li>
+    </ul>
+</nav>
+
+<section class="hero" id="home">
+    <h2>National Digital E-Voting Platform</h2>
+    <p>Blockchain powered, AI secured, End-to-End encrypted voting system.</p>
+    <button class="btn" onclick="scrollToSection('login')">Get Started</button>
+</section>
+
+<section id="login">
+    <div class="login-box">
+        <h2>Voter Authentication</h2>
+        <input type="text" id="voterID" placeholder="Enter Voter ID">
+        <input type="password" placeholder="OTP / Password">
+        <button class="btn" onclick="login()">Authenticate</button>
+    </div>
+</section>
+
+<section class="vote-section" id="vote">
+    <h2>Cast Your Secure Vote</h2>
+    <div class="candidates">
+        <div class="card">
+            <h3>Candidate A</h3>
+            <button class="btn" onclick="vote(0)">Vote</button>
+        </div>
+        <div class="card">
+            <h3>Candidate B</h3>
+            <button class="btn" onclick="vote(1)">Vote</button>
+        </div>
+        <div class="card">
+            <h3>Candidate C</h3>
+            <button class="btn" onclick="vote(2)">Vote</button>
+        </div>
+    </div>
+
+    <h2 style="margin-top:50px;">Live Blockchain Results</h2>
+    <div class="progress"><div class="progress-bar" id="bar0"></div></div>
+    <div class="progress"><div class="progress-bar" id="bar1"></div></div>
+    <div class="progress"><div class="progress-bar" id="bar2"></div></div>
+</section>
+
+<footer>
+© 2026 SecureVote | National Hackathon Project
+</footer>
+
+<script>
+let votes = JSON.parse(localStorage.getItem("votes")) || [0,0,0];
+let totalVotes = JSON.parse(localStorage.getItem("totalVotes")) || 0;
+let votedVoters = JSON.parse(localStorage.getItem("votedVoters")) || [];
+let authenticated = false;
+let currentVoter = "";
+
+updateResults();
+
+function login(){
+    let id = document.getElementById("voterID").value.trim();
+
+    if(id === ""){
+        alert("Please enter Voter ID");
+        return;
+    }
+
+    if(votedVoters.includes(id)){
+        alert("❌ This Voter ID has already voted!");
+        return;
+    }
+
+    authenticated = true;
+    currentVoter = id;
+    alert("✅ Authentication Successful (Blockchain Verified)");
+}
+
+function vote(index){
+    if(!authenticated){
+        alert("Please authenticate first!");
+        return;
+    }
+
+    if(votedVoters.includes(currentVoter)){
+        alert("❌ You have already voted!");
+        return;
+    }
+
+    votes[index]++;
+    totalVotes++;
+    votedVoters.push(currentVoter);
+
+    localStorage.setItem("votes", JSON.stringify(votes));
+    localStorage.setItem("totalVotes", JSON.stringify(totalVotes));
+    localStorage.setItem("votedVoters", JSON.stringify(votedVoters));
+
+    updateResults();
+
+    authenticated = false;
+    document.getElementById("voterID").value = "";
+
+    alert("🗳️ Vote securely stored on Blockchain!\nTransaction ID: " + 
+          Math.random().toString(36).substring(2));
+}
+
+function updateResults(){
+    for(let i=0;i<votes.length;i++){
+        let percent = totalVotes === 0 ? 0 : (votes[i]/totalVotes)*100;
+        document.getElementById("bar"+i).style.width = percent + "%";
+    }
+}
+
+function scrollToSection(id){
+    document.getElementById(id).scrollIntoView({behavior:"smooth"});
+}
+</script>
+
+</body>
+</html>

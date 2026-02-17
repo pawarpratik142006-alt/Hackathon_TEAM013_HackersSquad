@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>E-Voting System</title>
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial;
+}
+
+body{
+  background:linear-gradient(120deg,#1e3c72,#2a5298,#0f2027);
+  color:white;
+  text-align:center;
+}
+
+/* Login Box */
+.login-box{
+  width:300px;
+  margin:120px auto;
+  background:rgba(255,255,255,0.15);
+  padding:25px;
+  border-radius:15px;
+  backdrop-filter:blur(10px);
+}
+
+input{
+  width:100%;
+  padding:10px;
+  margin:10px 0;
+  border:none;
+  border-radius:8px;
+}
+
+button{
+  padding:10px 20px;
+  border:none;
+  border-radius:20px;
+  background:white;
+  color:#2a5298;
+  font-weight:bold;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+button:hover{
+  background:#ffcc00;
+  transform:scale(1.1);
+}
+
+/* Voting Area */
+#votePage{
+  display:none;
+  padding:20px;
+}
+
+.candidates{
+  display:flex;
+  justify-content:center;
+  gap:25px;
+  flex-wrap:wrap;
+  margin-top:20px;
+}
+
+.card{
+  background:rgba(255,255,255,0.15);
+  padding:20px;
+  width:220px;
+  border-radius:15px;
+  transition:0.3s;
+}
+
+.card:hover{
+  transform:translateY(-8px);
+}
+
+.result{
+  margin-top:20px;
+  font-size:18px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN PAGE -->
+<div class="login-box" id="loginPage">
+  <h2>🔐 Voter Login</h2>
+  <input type="text" id="voterId" placeholder="Enter Voter ID">
+  <input type="password" id="password" placeholder="Password">
+  <button onclick="login()">Login</button>
+  <p id="loginMsg"></p>
+</div>
+
+<!-- VOTING PAGE -->
+<div id="votePage">
+  <h1>🗳️ Cast Your Vote</h1>
+
+  <div class="candidates">
+
+    <div class="card">
+      <h3>Candidate 1</h3>
+      <p>Party A</p>
+      <button onclick="vote('A')">Vote</button>
+    </div>
+
+    <div class="card">
+      <h3>Candidate 2</h3>
+      <p>Party B</p>
+      <button onclick="vote('B')">Vote</button>
+    </div>
+
+    <div class="card">
+      <h3>Candidate 3</h3>
+      <p>Party C</p>
+      <button onclick="vote('C')">Vote</button>
+    </div>
+
+  </div>
+
+  <div class="result">
+    <h2>📊 Live Results</h2>
+    <p>Candidate 1: <span id="a">0</span></p>
+    <p>Candidate 2: <span id="b">0</span></p>
+    <p>Candidate 3: <span id="c">0</span></p>
+    <p id="voteMsg"></p>
+  </div>
+</div>
+
+<script>
+let voted = false;
+let countA = 0;
+let countB = 0;
+let countC = 0;
+
+function login(){
+  let id = document.getElementById("voterId").value;
+  let pass = document.getElementById("password").value;
+
+  if(id !== "" && pass !== ""){
+    document.getElementById("loginPage").style.display="none";
+    document.getElementById("votePage").style.display="block";
+  }else{
+    document.getElementById("loginMsg").innerText="Enter details!";
+  }
+}
+
+function vote(candidate){
+  if(voted){
+    document.getElementById("voteMsg").innerText="❌ You already voted!";
+    return;
+  }
+
+  if(candidate=="A"){ countA++; }
+  if(candidate=="B"){ countB++; }
+  if(candidate=="C"){ countC++; }
+
+  document.getElementById("a").innerText=countA;
+  document.getElementById("b").innerText=countB;
+  document.getElementById("c").innerText=countC;
+
+  voted=true;
+  document.getElementById("voteMsg").innerText="✅ Vote submitted successfully!";
+}
+</script>
+
+</body>
+</html>
