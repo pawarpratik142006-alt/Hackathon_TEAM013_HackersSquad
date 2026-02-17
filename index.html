@@ -1,281 +1,220 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>E-Voting Portal</title>
-
-<!-- Google Fonts -->
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-
+<title>India E-Voting Portal</title>
 <style>
-/* ===== CLEAN BLACK THEME ===== */
-body{
-margin:0;
-font-family:'Poppins',sans-serif;
-background:#0d0d0d;
-color:#00ffcc;
-overflow:hidden;
+/* ===== Global Reset ===== */
+body, h1, h2, p, ul {margin:0; padding:0; box-sizing:border-box;}
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg,#f0f8ff,#e6f2ff);
+  color:#333;
+  line-height:1.6;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  overflow-x:hidden;
 }
+/* ===== Header ===== */
+header {
+  background: linear-gradient(90deg,#ff9933,#ffffff,#138808);
+  color:white;
+  padding:20px 40px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  position:sticky;
+  top:0;
+  z-index:100;
+  box-shadow:0 4px 8px rgba(0,0,0,0.2);
+}
+header .logo {font-size:24px;font-weight:bold;color:#003366;}
+header nav a {color:#003366;margin-left:20px;text-decoration:none;font-size:16px;cursor:pointer;font-weight:bold;}
+header nav a:hover{text-decoration:underline;}
 
-/* ===== NAVBAR ===== */
-.navbar{
-background:#001a26;
-color:#ffffff;
-padding:25px 50px;
-font-size:22px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-font-weight:700;
-border-bottom:1px solid #00ffcc40;
-position:relative;
+/* ===== Card ===== */
+.card {
+  background:white;
+  max-width:550px;
+  margin:50px auto;
+  padding:30px;
+  border-radius:12px;
+  box-shadow:0 6px 25px rgba(0,0,0,0.3);
+  animation:fadeIn 1s ease;
 }
+@keyframes fadeIn {from{opacity:0; transform:translateY(30px);}to{opacity:1; transform:translateY(0);}}
 
-.title{
-font-family:'Orbitron',sans-serif;
-font-size:28px;
-display:flex;
-align-items:center;
-gap:10px;
-}
+/* ===== Inputs & Buttons ===== */
+input {width:100%;padding:12px;margin:10px 0;border-radius:6px;border:1px solid #aaa;font-size:14px;outline:none;}
+button {width:100%;padding:12px;margin-top:12px;border:none;border-radius:6px;background:linear-gradient(45deg,#0072ff,#00c6ff);color:white;font-size:16px;cursor:pointer;transition:0.3s;}
+button:hover{transform:scale(1.05);}
 
-/* Indian Flag in Navbar */
-.flag{
-width:30px;
-height:20px;
-border:1px solid #fff;
-display:inline-block;
-background:linear-gradient(to bottom, #ff9933 33%, #ffffff 33% 66%, #128807 66%);
-border-radius:2px;
-margin-right:8px;
-}
+/* ===== Party Cards ===== */
+.party {background:#e8f0ff;margin:8px 0;padding:12px;border-radius:6px;cursor:pointer;font-weight:bold;text-align:center;transition:0.3s; border:1px solid #0072ff;}
+.party:hover{background:#c0e0ff;transform:scale(1.02);}
 
-/* ===== CARD - GLASSMORPHISM ===== */
-.container{
-display:flex;
-justify-content:center;
-margin-top:60px;
-}
+/* ===== Fingerprint ===== */
+.fingerprint {width:70px;height:70px;border:3px solid #0072ff;border-radius:50%;margin:15px auto;animation:pulse 1.5s infinite;}
+@keyframes pulse {0%{box-shadow:0 0 5px #0072ff;}50%{box-shadow:0 0 25px #0072ff;}100%{box-shadow:0 0 5px #0072ff;}}
 
-.card{
-background:rgba(0,0,0,0.7);
-backdrop-filter:blur(12px);
-width:500px;
-padding:40px;
-border-radius:16px;
-box-shadow:0 0 35px #00ffcc40;
-position:relative;
-overflow:hidden;
-border:1px solid #00ffcc30;
-min-height:450px;
-transition:all 0.3s ease;
-}
+/* ===== Messages ===== */
+#msg {text-align:center;margin-top:10px;font-weight:bold;font-size:14px;}
 
-/* SCAN LINE */
-.scan{
-height:4px;
-width:100%;
-background:linear-gradient(to right,transparent,#00ffcc,transparent);
-position:absolute;
-top:0;
-animation:scanMove 2s infinite;
-}
-@keyframes scanMove{
-0%{top:0;}
-100%{top:100%;}
-}
+/* ===== Result Bars ===== */
+.bar-container {background:#eee;border-radius:5px;margin:10px 0;overflow:hidden;}
+.bar {height:28px;background:linear-gradient(90deg,#ff9933,#138808,#ffffff);text-align:right;color:white;padding-right:5px;line-height:28px;border-radius:5px;width:0;transition:width 1s;}
 
-/* HEADINGS */
-h2{
-text-align:center;
-color:#00ffcc;
-font-weight:700;
-font-size:24px;
-font-family:'Orbitron',sans-serif;
-}
+/* ===== Footer ===== */
+footer {background: linear-gradient(90deg,#ff9933,#ffffff,#138808);color:#003366;text-align:center;padding:12px;margin-top:auto;font-size:14px;font-weight:bold;}
 
-/* INPUTS */
-input{
-width:100%;
-padding:14px;
-margin:12px 0;
-border-radius:10px;
-border:1px solid #004466;
-background:rgba(0,0,0,0.4);
-color:#00ffcc;
-font-size:16px;
-font-family:'Poppins',sans-serif;
-}
-
-input:focus{
-outline:none;
-box-shadow:0 0 12px #00ffcc;
-}
-
-/* BUTTON */
-button{
-width:100%;
-padding:16px;
-margin:14px 0;
-border-radius:10px;
-border:none;
-background:#002233;
-color:#00ffcc;
-cursor:pointer;
-font-size:16px;
-font-weight:600;
-transition:0.3s;
-position:relative;
-overflow:hidden;
-font-family:'Orbitron',sans-serif;
-}
-
-button:hover{
-background:#004466;
-transform:scale(1.04);
-box-shadow:0 0 15px #00ffcc;
-}
-
-/* PARTY LIST */
-.party{
-display:flex;
-justify-content:space-between;
-padding:16px;
-border:1px solid #004466;
-border-radius:12px;
-margin:14px 0;
-cursor:pointer;
-transition:0.25s;
-background:rgba(0,0,0,0.4);
-font-family:'Orbitron',sans-serif;
-font-size:16px;
-font-weight:600;
-}
-
-.party:hover{
-background:#001a26;
-transform:translateX(8px);
-box-shadow:0 0 12px #00ffcc;
-}
-
-.link{
-text-align:center;
-margin-top:14px;
-color:#00ffcc;
-font-weight:600;
-cursor:pointer;
-font-family:'Poppins',sans-serif;
-font-size:16px;
-}
-
-/* FINGERPRINT */
-.finger{
-width:90px;
-height:90px;
-border:3px solid #00ffcc;
-border-radius:50%;
-margin:20px auto;
-position:relative;
-animation:pulse 1.5s infinite;
-}
-.finger:before{
-content:"";
-position:absolute;
-width:100%;
-height:100%;
-border-radius:50%;
-border:2px dashed #00ffcc;
-animation:rotate 6s linear infinite;
-}
-@keyframes pulse{
-0%{box-shadow:0 0 0 0 #00ffcc;}
-70%{box-shadow:0 0 0 24px transparent;}
-}
-@keyframes rotate{
-100%{transform:rotate(360deg);}
+/* ===== Responsive ===== */
+@media screen and (max-width:600px){
+  header, .card{padding:20px;}
+  .card{margin:30px 15px;}
+  header nav a{margin-left:12px;font-size:14px;}
 }
 </style>
 </head>
 <body>
 
-<div class="navbar">
-<div class="title"><span class="flag"></span>National E-Voting Hackathon</div>
-<div>Tech Innovation Cell</div>
-</div>
+<header>
+  <div class="logo">🇮🇳 India E-Voting Portal</div>
+  <nav>
+    <a onclick="showPage('login')">Home</a>
+    <a onclick="showPage('results')">Results</a>
+    <a onclick="showPage('help')">Help</a>
+  </nav>
+</header>
 
-<div class="container">
-<div class="card" id="app">
-<div class="scan"></div>
-</div>
-</div>
+<div class="card" id="app"></div>
+
+<footer>Official E-Voting Portal — Demo Only</footer>
 
 <script>
-/* VOTING SYSTEM MULTI-PAGE */
+// ===== Vote Data & State =====
 let votes={"BJP":0,"Congress":0,"NCP":0,"Shiv Sena":0,"AAP":0};
 let voted=false;
+let isAdmin=false;
 const app=document.getElementById('app');
 
+// ===== Page Renderer =====
 function showPage(page){
-switch(page){
-  case 'login':
-    app.innerHTML=`
-    <div class="scan"></div>
-    <h2>Secure Voter Authentication</h2>
-    <div class="finger"></div>
-    <input id="name" placeholder="Full Name">
-    <input id="age" placeholder="Age">
-    <input id="aadhaar" placeholder="Aadhaar Number">
-    <button onclick="validateLogin()">Next</button>
-    `;
-    break;
-  case 'instructions':
-    app.innerHTML=`
-    <div class="scan"></div>
-    <h2>Voting Instructions</h2>
-    <p>Please ensure your details are correct and vote carefully. Once submitted, your vote cannot be changed.</p>
-    <button onclick="showPage('vote')">Start Voting</button>
-    `;
-    break;
-  case 'vote':
-    app.innerHTML=`
-    <div class="scan"></div>
-    <h2>Select Party</h2>
-    <div class="party" onclick="confirmVote('BJP')">BJP</div>
-    <div class="party" onclick="confirmVote('Congress')">Congress</div>
-    <div class="party" onclick="confirmVote('NCP')">NCP</div>
-    <div class="party" onclick="confirmVote('Shiv Sena')">Shiv Sena</div>
-    <div class="party" onclick="confirmVote('AAP')">AAP</div>
-    <button onclick="showPage('instructions')">Back</button>
-    `;
-    break;
-  case 'thankyou':
-    app.innerHTML=`
-    <div class="scan"></div>
-    <h2>Thank You for Voting!</h2>
-    <p>Your vote has been securely submitted.</p>
-    <button onclick="showPage('login')">Back to Home</button>
-    `;
-    break;
-}
+  switch(page){
+    case 'login':
+      app.innerHTML=`
+        <h2>Voter Login</h2>
+        <input type="text" id="name" placeholder="Full Name">
+        <input type="number" id="age" placeholder="Age">
+        <input type="text" id="aadhaar" placeholder="Aadhaar Number (12 digits)">
+        <div class="fingerprint"></div>
+        <button onclick="verifyLogin()">Verify & Continue</button>
+        <button onclick="showAdminLogin()">Admin Login</button>
+        <div id="msg"></div>
+      `;
+      break;
+
+    case 'instructions':
+      app.innerHTML=`
+        <h2>Voting Instructions</h2>
+        <p>Please check your information carefully. Once submitted, your vote cannot be changed.</p>
+        <button onclick="showPage('vote')">Start Voting</button>
+      `;
+      break;
+
+    case 'vote':
+      app.innerHTML=`
+        <h2>Cast Your Vote</h2>
+        <div class="party" onclick="confirmVote('BJP')">BJP</div>
+        <div class="party" onclick="confirmVote('Congress')">Congress</div>
+        <div class="party" onclick="confirmVote('NCP')">NCP</div>
+        <div class="party" onclick="confirmVote('Shiv Sena')">Shiv Sena</div>
+        <div class="party" onclick="confirmVote('AAP')">AAP</div>
+      `;
+      break;
+
+    case 'thankyou':
+      app.innerHTML=`
+        <h2>Thank You for Voting!</h2>
+        <p>Your vote has been securely submitted.</p>
+        <button onclick="showPage('results')">View Results</button>
+      `;
+      break;
+
+    case 'results':
+      let html='<h2>Live Vote Results</h2>';
+      let total=0;
+      for(let p in votes){total+=votes[p];}
+      for(let p in votes){
+        let percent=total>0?Math.round((votes[p]/total)*100):0;
+        html+=`<p>${p}: ${votes[p]} votes</p>
+               <div class="bar-container"><div class="bar" style="width:0" data-percent="${percent}">${percent}%</div></div>`;
+      }
+      if(!isAdmin){
+        html+='<p style="font-size:12px;color:red;">Admin login required for full details</p>';
+      }
+      html+='<button onclick="showPage(\'login\')">Back to Home</button>';
+      app.innerHTML=html;
+      animateBars();
+      break;
+
+    case 'help':
+      app.innerHTML=`
+        <h2>Help & Instructions</h2>
+        <p>If you encounter any issues, please contact your election administrator.</p>
+        <button onclick="showPage('login')">Back to Home</button>
+      `;
+      break;
+
+    case 'admin':
+      app.innerHTML=`
+        <h2>Admin Login</h2>
+        <input type="password" id="adminPass" placeholder="Enter Admin Password">
+        <button onclick="adminLogin()">Login</button>
+      `;
+      break;
+  }
 }
 
-function validateLogin(){
-let age=document.getElementById("age").value;
-if(age>=18){
-  showPage('instructions');
-}else{
-  alert("Only 18+ voters allowed");
-}
+// ===== Animate Result Bars =====
+function animateBars(){
+  const bars=document.querySelectorAll('.bar');
+  bars.forEach(bar=>{
+    const percent=bar.getAttribute('data-percent');
+    setTimeout(()=>{bar.style.width=percent+'%';},100);
+  });
 }
 
+// ===== Verify Login =====
+function verifyLogin(){
+  const age=document.getElementById("age").value;
+  const aadhaar=document.getElementById("aadhaar").value;
+  const msg=document.getElementById("msg");
+  if(age<18){msg.innerHTML="❌ You must be 18+ to vote";msg.style.color="red";return;}
+  if(aadhaar.length!=12 || isNaN(aadhaar)){msg.innerHTML="❌ Invalid Aadhaar Number";msg.style.color="red";return;}
+  msg.innerHTML="✅ Verification Successful";msg.style.color="green";
+  setTimeout(()=> showPage('instructions'),1000);
+}
+
+// ===== Confirm Vote =====
 function confirmVote(party){
-if(voted){alert("You already voted");return;}
-votes[party]++;
-voted=true;
-showPage('thankyou');
+  if(voted){alert("You already voted"); return;}
+  if(confirm(`Are you sure you want to vote for ${party}?`)){
+    votes[party]++;
+    voted=true;
+    showPage('thankyou');
+  }
 }
 
-// Start at login page
+// ===== Admin Login =====
+function showAdminLogin(){showPage('admin');}
+function adminLogin(){
+  const pass=document.getElementById('adminPass').value;
+  if(pass==='admin123'){isAdmin=true; alert('Admin Login Successful'); showPage('results');}
+  else alert('Incorrect Password');
+}
+
+// ===== Start App =====
 showPage('login');
 </script>
 
